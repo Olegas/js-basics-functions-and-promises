@@ -291,7 +291,128 @@ d.setDate(27); // 27.03.2017
 		</code></pre>
 	</section>
 
+	<section class="slide">
+		<h2 class="shout">Ассоциативные массивые</h2>
+	</section>
 
+	<section class="slide">
+		<h2>Ассициативные массивы</h2>
+		<p>Они же &laquo;объекты&raquo;, они же &laquo;словари&raquo;, они же &laquo;hash map&raquo;. Ключи &mdash; строки, значения &mdash; все что угодно</p>
+		<pre><code class="javascript">
+var obj = {};
+obj.x = 1;
+obj['x']; // 1
+obj.x; // 1
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Ассициативные массивы</h2>
+		<p>Можно объявлять сразу со значениями</p>
+		<pre><code class="javascript">
+var o = {
+	baz: {
+		inside: true
+	}
+};
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Ассициативные массивы</h2>
+		<p>Если очень хочется, можно сделать даже ключ с пробелом</p>
+		<pre><code class="javascript">
+var o = {};
+o['ключ с пробелом в названии'] = 1;
+// но использовать можно только через []
+o.ключ с пробелом в названии = 1; // Ошибка!
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Ассициативные массивы</h2>
+		<p>Возможен доступ через переменную</p>
+		<pre><code class="javascript">
+var o = {};
+var prop = 'foo';
+o[prop] = 'bar';
+o.foo; // 'bar'
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Ассициативные массивы</h2>
+		<p>Проверка ключа: надежнее через <code>in</code></p>
+		<pre><code class="javascript">
+var o = {};
+o.foo = 1;
+'foo' in o; // true
+'bar' in o; // false
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Ассициативные массивы</h2>
+		<p>Не проверяйте через <code>== undefined</code>!</p>
+		<pre><code class="javascript">
+var o = {};
+o.x = undefined; // so evil!
+o.x == undefined; // true!
+		</code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2>Как перебрать все ключи?</h2>
+		<p>Цикл for-in, но важно помнить, что порядок перебора в общем случае не гарантирован!</p>
+		<pre><code class="javascript">
+for(var key in obj) {
+	alert('Key: ' + key + ', value: ' + obj[key]);
+}
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Как удалить ключ?</h2>
+		<p>Оператор <code>delete</code>. Предназначен только для того, что бы удалить ключ из словаря!</p>
+		<pre><code class="javascript">
+var o = { x: 1 };
+'x' in o; // true
+delete o.x
+'x' in o; // false
+		</code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2>Объекты &laquo;ходят&raquo; по ссылке</h2>
+		<p>В переменной хранится не сам объект, а &laquo;адрес в памяти&raquo; где он находится.</p>
+		<pre><code class="javascript">
+var o = { x: 1 };
+var b = o; // не копия а ссылка!
+b.y = 2; // меняем и "оригинал"
+'y' in o; // true
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2 class="shout">Массивы</h2>
+	</section>
+
+
+	<section class="slide">
+		<h2>Массивы</h2>
+		<p>Как объекты, но с прицелом на числовые положительные ключи</p>
+		<ul>
+			<li class="next">Значет сколько в нем элементов</li>
+			<li class="next">Имеет дополнительные методы для добавления элементов в начало, середину и конец</li>
+			<li class="next">Но, грубо говоря, это все тот же объект или словарь</li>
+		</ul>
+	</section>
+
+	<section class="slide">
+		<h2>Создание</h2>
+	</section>
 
 
 	<section class="slide">
