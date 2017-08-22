@@ -5,7 +5,8 @@
 	<meta charset="utf-8">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="node_modules/shower-ribbon/styles/screen-16x10.css">
+	<link rel="stylesheet" href="node_modules/shower-material/styles/screen-16x10.css">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
 </head>
 <body class="shower list">
 
@@ -42,6 +43,256 @@
 					}
 		</style>
 	</section>
+
+	<section class="slide">
+		<h2>Типы данных</h2>
+		<p>Грубо говоря, в JavaScript &mdash; любой тип является объектом. У любых данных (за исключением <code>null</code> и
+			<code>undefined</code>) есть вспомогательные фукнции и значения, доступные &laquo;через точку&raquo;</p>
+		<p>Функции &mdash; методы, значения &mdash; свойства</p>
+	</section>
+
+	<section class="slide">
+		<h2 class="shout">Строки</h2>
+	</section>
+
+	<section class="slide">
+		<h2>Строки</h2>
+		<pre>中文 español English हिन्दी العربية português বাংলা русский 日本語 ਪੰਜਾਬੀ 한국어 தமிழ் \t\r\n</pre>
+		<ul>
+			<li class="next">Не изменяемые &mdash; операция со строкой пораждает новую строку</li>
+			<li class="next">Доступна конкатенация строк через оператор +</li>
+			<li class="next">Сравнение лексикографически по unicode-кодам символов</li>
+		</ul>
+	</section>
+
+	<section class="slide">
+		<h2>Строки. Неизменяемые</h2>
+		<pre><code class="javascript">
+var s = '123';
+s[0]; // '1'
+s[0] = 'x';
+s; // '123'</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Строки. Сравнение</h2>
+		<pre><code class="javascript">
+'а' < 'Я'; // false
+'a' < 'я'; // true
+'a' == 'а'; // true
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Строки. Полезности</h2>
+		<pre><code class="javascript">
+'abc'.toUpperCase(); // 'ABC'
+'abc'.length; // 3
+'abc'.charCodeAt(0); // 97
+String.fromCharCode(97, 98); // 'ab'
+'' + 123; // '123'
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Строки. Что не надо делать</h2>
+		<p>Не используйте конструктор <code>new String('abc')</code>.</p>
+		<pre><code class="javascript">
+// "неожиданное" (на самом деле нет)
+// поведение при сравнении
+new String('abc') == new String('abc'); // false
+new String('abc') == 'abc'; //true
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2 class="shout">Числа</h2>
+	</section>
+
+	<section class="slide">
+		<h2>Числа</h2>
+		<ul>
+			<li class="next">Нет разницы типов между int, float и т.п.</li>
+			<li class="next">Можно делить на 0!</li>
+			<li class="next">Можно конвертировать в строку в любую систему счисления</li>
+			<li class="next">Можно &laquo;распознавать&raquo; из строки с указанием системы счисления</li>
+			<li class="next">Объект <code>Math</code> для математических констант и функций</li>
+		</ul>
+	</section>
+
+	<section class="slide">
+		<h2>Числа</h2>
+		<pre><code class="javascript">
+1
+2.3
+3e-5
+0xCAFEBABE; // шестнадцатеричная система
+0733; // восьмеричная система
+0b1101001; // двоичная система
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Числа. Можно делить на 0!</h2>
+		<pre><code class="javascript">
+1/0; // Infinity
+-1/0; // -Infinity
+0/0; // NaN
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Числа. Специальные значения</h2>
+		<p>NaN &mdash; Not A Number, но&hellip;</p>
+		<pre><code class="javascript">
+typeof(NaN); // number
+		</code></pre>
+		<p>Используется для представления результата операции, который нельзя описать числом</p>
+	</section>
+
+	<section class="slide">
+		<h2>Числа. Специальные значения</h2>
+		<p><code>NaN</code> нельзя ни с чем сравнить</p>
+		<pre><code class="javascript">
+NaN === NaN; // false
+isNaN(NaN); // true
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Числа. Специальные значения</h2>
+		<p>Для проверки на &laquo;конечность&raquo; надо использовать специальные функции</p>
+		<pre><code class="javascript">
+isFinite(1); // true
+isFinite(1/0); // false
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Числа. Из строки</h2>
+		<pre><code class="javascript">
+parseInt('123'); // 123
+parseInt('0x123', 16); // 291
+parseInt('123', 16); // 291
+parseInt('1какойтомусор'); // 1
+parseInt('какойтомусор1'); // NaN
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Числа. В строку</h2>
+		<pre><code class="javascript">
+'' + 123; // '123'
+(123).toString(); // '123'
+(123).toString(2); // '1111011'
+(123).toString(16); // '7b'
+(3.1415926).toFixed(3); // '3.142' <-- округление!
+		</code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2>Числа. Math</h2>
+		<ul>
+			<li class="next">Константы: <code>Math.PI</code>, <code>Math.E</code>, <code>Math.LN10</code>, etc&hellip;</li>
+			<li class="next">Функции
+				<ul>
+					<li class="next"><code>Math.sin</code>, <code>Math.cos</code>, etc&hellip;</li>
+					<li class="next"><code>Math.max(...)</code>, <code>Math.min(...)</code></li>
+					<li class="next"><code>Math.sqrt</code>, <code>Math.pow</code></li>
+					<li class="next"><code>Math.round</code>, <code>Math.ceil</code>, <code>Math.floor</code></li>
+					<li class="next"><code>Math.random</code></li>
+				</ul>
+			</li>
+		</ul>
+	</section>
+
+	<section class="slide">
+		<h2>Преобразование типов</h2>
+		<p>Актуально:</p>
+		<ul>
+			<li>Оператор +</li>
+			<li>Любое сравнение</li>
+		</ul>
+	</section>
+
+	<section class="slide">
+		<h2>Преобразование при &laquo;сложении&raquo;</h2>
+		<p>Если операнды разных типов а) хотя бы один из операндов строка, другой тоже приводится к строке;
+			б) в других случаях сравниваются числовые представления операндов</p>
+		<pre><code class="javascript">
+1 + '2'; // '12'
+true + 1; // 2
+false == 0; // true
+		</code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2 class="shout">Дата</h2>
+	</section>
+
+	<section class="slide">
+		<h2>Дата</h2>
+		<ul>
+			<li class="next">Только дата-время, нет отдельно типов для даты или времени</li>
+			<li class="next">Точность &mdash; миллисекунды</li>
+			<li class="next">Отсчет от 01.01.1970 (Linux epoch)</li>
+			<li class="next">Отсчет месяцев с нуля</li>
+			<li class="next">Отсчет дней недели с нуля, и это воскресенье а не понедельник</li>
+			<li class="next">Есть автокоррекция, но есть нюанс&hellip;</li>
+			<li class="next">Можно складывать и вычитать<span class="next">, но есть нюанс&hellip;</span></li>
+		</ul>
+	</section>
+
+	<section class="slide">
+		<h2>Дата</h2>
+		<pre><code class="javascript">
+new Date(); // текущее время
+new Date(2000); // 2000 миллисекунд от начала
+new Date(2000, 1, 20); // 20-е февраля (!) 2000 года
+// 20.02.2000 10:30:50.900
+new Date(2000, 1, 20, 10, 30, 50, 900);
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Дата. Автокоррекция</h2>
+		<pre><code class="javascript">
+new Date(2017, 2, <mark>32</mark>); // 01.<mark>04</mark>.2017
+var d = new Date(2017, 0, 1, 10); // 01.01.2017 10:00:00
+d.setMinutes(<mark>120</mark>);
+d; // 01.01.2017 <mark>12</mark>:00:00
+		</code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2>Дата. Автокоррекция</h2>
+		<p>Будьте осторожны собирая дату &laquo;по-кусочкам&raquo;</p>
+		<pre><code class="javascript">
+var d = new Date(2017, 3, 30); // 30.04.2017
+// Хотим собрать 27 февраля
+d.setMonth(1);
+d.setDate(27);
+d; // 27.<mark>03</mark>.2017 ????????
+		</code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2>Дата. Автокоррекция</h2>
+		<p>Проследим изменения даты подробнее&hellip;</p>
+		<pre><code class="javascript">
+var d = new Date(2017, 3, 30); // 30.04.2017
+// Хотим собрать 27 февраля
+d.setMonth(1); // 30.04.2017 -> <mark>30.02</mark>.2017 -> 02.03.2017
+d.setDate(27); // 27.03.2017
+		</code></pre>
+	</section>
+
+
+
 
 	<section class="slide">
 		<h2>Shower key features</h2>
@@ -201,5 +452,7 @@
 	<script src="node_modules/shower-core/shower.min.js"></script>
 	<!-- Copyright © 2017 Yours Truly, Famous Inc. -->
 
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
