@@ -37,12 +37,12 @@
 <body class="shower list">
 
 	<header class="caption">
-		<h1>JavaScript. Основы. Типы данных</h1>
+		<h1>JavaScript. Основы. Функции, асинхронность.</h1>
 		<p>Елифантьев Олег, Тензор.</p>
 	</header>
 
 	<section class="slide" id="cover">
-		<h2>JavaScript. Основы</h2>
+		<h2>JavaScript. Функции, асинхронность.</h2>
 		<p>Елифантьев Олег, Тензор.</p>
 		<figure>
 			<img class="cover" src="pictures/cover.jpg" alt="Hands on the orange typewriter in a park">
@@ -71,25 +71,148 @@
 	</section>
 
 	<section class="slide">
-		<h2>Типы данных</h2>
-		<p>Грубо говоря, в JavaScript &mdash; любой тип является объектом. У любых данных (за исключением <code>null</code> и
-			<code>undefined</code>) есть вспомогательные фукнции и значения, доступные &laquo;через точку&raquo;</p>
-		<p>Функции &mdash; методы, значения &mdash; свойства</p>
+		<h2>Функции и асинхронные процесс</h2>
+		<p>Понимание таких вещей как область видимости, hoisting (оно же всплытие), замыкания, контекст
+			вызова и асинхронная обработка &mdash; основополагающие вещи в JavaScript</p>
 	</section>
 
 	<section class="slide">
-		<h2 class="shout">Строки</h2>
+		<h2 class="shout">Глобальный объект</h2>
 	</section>
 
 	<section class="slide">
-		<h2>Строки</h2>
-		<pre>中文 español English हिन्दी العربية português বাংলা русский 日本語 ਪੰਜਾਬੀ 한국어 தமிழ் \t\r\n</pre>
-		<ul>
-			<li class="next">Не изменяемые &mdash; операция со строкой пораждает новую строку</li>
-			<li class="next">Доступна конкатенация строк через оператор +</li>
-			<li class="next">Сравнение лексикографически по unicode-кодам символов</li>
-		</ul>
+		<h2>Глобальные функции и переменные</h2>
+		<figure>
+			<blockquote>
+				<p>Глобальными называют переменные и функции, которые не находятся внутри какой-то функции.
+					То есть, иными словами, если переменная или функция не находятся внутри конструкции
+					<code>function</code>, то они &mdash; &laquo;глобальные&raquo;.</p></blockquote>
+			<figcaption>learn.javascript.ru</figcaption>
+		</figure>
 	</section>
+
+	<section class="slide">
+		<h2>Глобальный объект</h2>
+		<p>На самом деле все &laquo;глобальные&raquo; сущности являются свойствами глобального объекта. В браузере это объект <code>window</code></p>
+		<pre><code class="javascript">
+var a = 1;
+window.a; // 1
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Порядок объявления и присвоения</h2>
+		<p>Переменные объявляются в момент интерпретации скрипта, присвоение происходит в тот момент, когда выполнение дойдет до этого места.</p>
+		<pre><code class="javascript">
+alert(x); // ReferenceError: x is not defined
+alert(x); var x = 1; // Алерт с текстом undefined
+// ... хотя может показаться что переменной нет
+		</code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2>Область видимости и всплытие</h2>
+		<pre><code class="javascript">
+function foo() {
+	for(var i = 0; i < 10; i++) {
+		// do something
+	}
+	alert(i); // ?.. <span class="next"><mark>10</mark></span>
+}
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Что на самом деле происходит?</h2>
+		<pre><code class="javascript">
+function foo() {
+	<mark>var i;</mark> // переменная "всплывает"
+	for(i = 0; i < 10; i++) {
+		// do something
+	}
+	alert(i);
+}
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Что ограничивает всплытие?</h2>
+		<p>&laquo;Всплытие&raquo; ограничивается областью видимости переменной.</p>
+		<p>Область видимости в свою очередь ограничивается функцией.</p>
+		<p>Вывод: переменную видно в той функции, где она объявлена, и во всех функциях ниже.</p>
+	</section>
+
+	<section class="slide">
+		<h2>Пример</h2>
+		<pre><code class="javascript">
+function outer() {
+	var a = 1; // <--------.
+	function inner() { //  |
+		alert(a); // ------'
+	}
+	inner();
+}
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Пример</h2>
+		<pre><code class="javascript">
+function outer() {
+	function inner() {
+		alert(a); // ?.. <span class="next"><mark>undefined</mark></span>
+	}
+	inner();
+	var a = 1;
+}
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Пример</h2>
+		<pre><code class="javascript">
+function outer() {
+	var a;
+	function inner() {
+		alert(a);
+	}
+	inner();
+	a = 1;
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Кстати&hellip;</h2>
+		<pre><code class="javascript">
+function outer() {
+	var a = 1;
+	inner();
+	function inner() {
+		alert(a); // 1
+	}
+}
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Кстати&hellip;</h2>
+		<p>Функции, а если точнее, выражения типа Function Declaration (объявление функции), тоже всплывают к вершине области видимости</p>
+	</section>
+
+	<section class="slide">
+		<h2>А что есть кроме Function Declaration?</h2>
+		<p>Function Expression</p>
+		<pre><code class="javascript">
+// работает так же, как и простое присвоение
+var myFunc = function theName() { return 1; }
+myFunc(); // 1
+theName(); // ReferenceError: theName is not defined
+		</code></pre>
+	</section>
+
+
+
 
 	<section class="slide">
 		<h2>Строки. Неизменяемые</h2>
