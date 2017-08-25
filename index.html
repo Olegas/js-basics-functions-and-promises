@@ -244,6 +244,24 @@ badOne(); // ReferenceError: myVar is not defined
 		</code></pre>
 	</section>
 
+	<section class="slide">
+		<h2>Кстати! А что такое замыкание?</h2>
+		<p>Замыкание это функция и все внешние переменные (из других областей видимости) которые ей доступны. Создается в момент объявления функции.</p>
+	</section>
+
+	<section class="slide">
+		<h2>Всегда текущее значение!</h2>
+		<pre><code class="javascript">
+var name = 'John';
+function makeGreeting() {
+	alert('Hello, ' + name + '!');
+}
+makeGreeting(); // 'Hello, John!'<span class="next">
+name = 'Иван';
+makeGreeting(); // 'Hello, Иван!'</span>
+		</code></pre>
+	</section>
+
 
 	<section class="slide">
 		<h2>Итого: области видимости</h2>
@@ -252,450 +270,123 @@ badOne(); // ReferenceError: myVar is not defined
 			<li class="next">Объявление переменной и функции всегда всплывает к верхней точки области видимости</li>
 			<li class="next">Присвоение происходит только там где оно описано</li>
 			<li class="next">Переменная ищется в текущей области видимости, и выше пока не &laquo;упремся&raquo; в глобальный объект.</li>
-			<li class="next">Используйте строгий режим!</li>
-		</ul>
-	</section>
-
-
-	<section class="slide">
-		<h2>Строки. Неизменяемые</h2>
-		<pre><code class="javascript">
-var s = '123';
-s[0]; // '1'
-s[0] = 'x';
-s; // '123'</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Строки. Сравнение</h2>
-		<pre><code class="javascript">
-'а' < 'Я'; // false
-'a' < 'я'; // true
-'a' == 'а'; // true
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Строки. Полезности</h2>
-		<pre><code class="javascript">
-'abc'.toUpperCase(); // 'ABC'
-'abc'.length; // 3
-'abc'.charCodeAt(0); // 97
-String.fromCharCode(97, 98); // 'ab'
-'' + 123; // '123'
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Строки. Что не надо делать</h2>
-		<p>Не используйте конструктор <code>new String('abc')</code>.</p>
-		<pre><code class="javascript">
-// "неожиданное" (на самом деле нет)
-// поведение при сравнении
-new String('abc') == new String('abc'); // false
-new String('abc') == 'abc'; //true
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2 class="shout">Числа</h2>
-	</section>
-
-	<section class="slide">
-		<h2>Числа</h2>
-		<ul>
-			<li class="next">Нет разницы типов между int, float и т.п.</li>
-			<li class="next">Можно делить на 0!</li>
-			<li class="next">Можно конвертировать в строку в любую систему счисления</li>
-			<li class="next">Можно &laquo;распознавать&raquo; из строки с указанием системы счисления</li>
-			<li class="next">Объект <code>Math</code> для математических констант и функций</li>
+			<li class="next">Всегда текущее значение, а не то, что было в момент создания замыкания</li>
 		</ul>
 	</section>
 
 	<section class="slide">
-		<h2>Числа</h2>
-		<pre><code class="javascript">
-1
-2.3
-3e-5
-0xCAFEBABE; // шестнадцатеричная система
-0733; // восьмеричная система
-0b1101001; // двоичная система
-		</code></pre>
+		<h2 class="shout">Методы объектов и контекст вызова</h2>
 	</section>
 
 	<section class="slide">
-		<h2>Числа. Можно делить на 0!</h2>
-		<pre><code class="javascript">
-1/0; // Infinity
--1/0; // -Infinity
-0/0; // NaN
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Числа. Специальные значения</h2>
-		<p>NaN &mdash; Not A Number, но&hellip;</p>
-		<pre><code class="javascript">
-typeof(NaN); // number
-		</code></pre>
-		<p>Используется для представления результата операции, который нельзя описать числом</p>
-	</section>
-
-	<section class="slide">
-		<h2>Числа. Специальные значения</h2>
-		<p><code>NaN</code> нельзя ни с чем сравнить</p>
-		<pre><code class="javascript">
-NaN === NaN; // false
-isNaN(NaN); // true
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Числа. Специальные значения</h2>
-		<p>Для проверки на &laquo;конечность&raquo; надо использовать специальные функции</p>
-		<pre><code class="javascript">
-isFinite(1); // true
-isFinite(1/0); // false
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Числа. Из строки</h2>
-		<pre><code class="javascript">
-parseInt('123'); // 123
-parseInt('0x123', 16); // 291
-parseInt('123', 16); // 291
-parseInt('1какойтомусор'); // 1
-parseInt('какойтомусор1'); // NaN
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Числа. В строку</h2>
-		<pre><code class="javascript">
-'' + 123; // '123'
-(123).toString(); // '123'
-(123).toString(2); // '1111011'
-(123).toString(16); // '7b'
-(3.1415926).toFixed(3); // '3.142' <-- округление!
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Числа. Math</h2>
-		<ul>
-			<li class="next">Константы: <code>Math.PI</code>, <code>Math.E</code>, <code>Math.LN10</code>, etc&hellip;</li>
-			<li class="next">Функции
-				<ul>
-					<li class="next"><code>Math.sin</code>, <code>Math.cos</code>, etc&hellip;</li>
-					<li class="next"><code>Math.max(...)</code>, <code>Math.min(...)</code></li>
-					<li class="next"><code>Math.sqrt</code>, <code>Math.pow</code></li>
-					<li class="next"><code>Math.round</code>, <code>Math.ceil</code>, <code>Math.floor</code></li>
-					<li class="next"><code>Math.random</code></li>
-				</ul>
-			</li>
-		</ul>
-	</section>
-
-	<section class="slide">
-		<h2>Преобразование типов</h2>
-		<p>Актуально:</p>
-		<ul>
-			<li>Оператор +</li>
-			<li>Любое сравнение</li>
-		</ul>
-	</section>
-
-	<section class="slide">
-		<h2>Преобразование при &laquo;сложении&raquo;</h2>
-		<p>Если операнды разных типов а) хотя бы один из операндов строка, другой тоже приводится к строке;
-			б) в других случаях сравниваются числовые представления операндов</p>
-		<pre><code class="javascript">
-1 + '2'; // '12'
-true + 1; // 2
-false == 0; // true
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2 class="shout">Дата</h2>
-	</section>
-
-	<section class="slide">
-		<h2>Дата</h2>
-		<ul>
-			<li class="next">Только дата-время, нет отдельно типов для даты или времени</li>
-			<li class="next">Точность &mdash; миллисекунды</li>
-			<li class="next">Отсчет от 01.01.1970 (Linux epoch)</li>
-			<li class="next">Отсчет месяцев с нуля</li>
-			<li class="next">Отсчет дней недели с нуля, и это воскресенье а не понедельник</li>
-			<li class="next">Есть автокоррекция, но есть нюанс&hellip;</li>
-			<li class="next">Можно складывать и вычитать<span class="next">, но есть нюанс&hellip;</span></li>
-		</ul>
-	</section>
-
-	<section class="slide">
-		<h2>Дата</h2>
-		<pre><code class="javascript">
-new Date(); // текущее время
-new Date(2000); // 2000 миллисекунд от начала
-new Date(2000, 1, 20); // 20-е февраля (!) 2000 года
-// 20.02.2000 10:30:50.900
-new Date(2000, 1, 20, 10, 30, 50, 900);
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Дата. Автокоррекция</h2>
-		<pre><code class="javascript">
-new Date(2017, 2, <mark>32</mark>); // 01.<mark>04</mark>.2017
-var d = new Date(2017, 0, 1, 10); // 01.01.2017 10:00:00
-d.setMinutes(<mark>120</mark>);
-d; // 01.01.2017 <mark>12</mark>:00:00
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Дата. Автокоррекция</h2>
-		<p>Будьте осторожны собирая дату &laquo;по-кусочкам&raquo;</p>
-		<pre><code class="javascript">
-var d = new Date(2017, 3, 30); // 30.04.2017
-// Хотим собрать 27 февраля
-d.setMonth(1);
-d.setDate(27);
-d; // 27.<mark>03</mark>.2017 ????????
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Дата. Автокоррекция</h2>
-		<p>Проследим изменения даты подробнее&hellip;</p>
-		<pre><code class="javascript">
-var d = new Date(2017, 3, 30); // 30.04.2017
-// Хотим собрать 27 февраля
-d.setMonth(1); // 30.04.2017 -> <mark>30.02</mark>.2017 -> 02.03.2017
-d.setDate(27); // 27.03.2017
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2 class="shout">Ассоциативные массивые</h2>
-	</section>
-
-	<section class="slide">
-		<h2>Ассициативные массивы</h2>
-		<p>Они же &laquo;объекты&raquo;, они же &laquo;словари&raquo;, они же &laquo;hash map&raquo;. Ключи &mdash; строки, значения &mdash; все что угодно</p>
-		<pre><code class="javascript">
-var obj = {};
-obj.x = 1;
-obj['x']; // 1
-obj.x; // 1
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Ассициативные массивы</h2>
-		<p>Можно объявлять сразу со значениями</p>
+		<h2>Методы объектов</h2>
+		<p>Свойствами объекта могут быть и функции. Так получим методы.</p>
 		<pre><code class="javascript">
 var o = {
-	baz: {
-		inside: true
+	name: 'Luke Skywalker',
+	sayHi: function() {
+		alert('Hello!');
 	}
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Обращение изнутри</h2>
+		<pre><code class="javascript">
+var o = {
+	name: 'Luke Skywalker',
+	sayName: function() {
+		alert('My name is ' + ??????????);
+	}
+}
+		</code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2>Клюевое слово this</h2>
+		<pre><code class="javascript">
+var o = { // <---------------------------------.
+	name: 'Luke Skywalker', // <------------.  |
+	sayName: function() {                // |  |
+		alert('My name is ' + this.name);// |  |
+	} //                        ^    ^------'  |
+} //                            '--------------'
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Что же такое this?</h2>
+		<ul>
+			<li class="next">Правильное название &mdash; контекст вызова</li>
+			<li class="next">Есть у любой функции, не только у метода объекта</li>
+			<li class="next">Определяется в момент вызова</li>
+			<li class="next">В момент обращения уже нельзя изменить</li>
+		</ul>
+	</section>
+
+	<section class="slide">
+		<h2>У любой функции? Даже без объекта?</h2>
+		<pre><code class="javascript">
+function showThis() {
+	alert(this);
+}
+showThis(); // [object Window], глобальный объект window
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>This <del>is</del> и strict mode</h2>
+		<p>При работе в strict mode поведение отличается!</p>
+		<pre><code class="javascript">
+function showThis() {
+	'use strict';
+	alert(this);
+}
+showThis(); // undefined
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Особенности</h2>
+		<p>Помним о том, что контекст определяется во время вызова!</p>
+		<pre><code class="javascript">
+var o = {
+	prop: 'value',
+	f: function() { alert(this.prop); }
+}
+var f2 = o.f; f2(); // undefined
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Внимательно следим за руками!</h2>
+		<pre><code class="javascript">
+'use strict';
+var method, o = {
+	f: function() { alert(this); }
 };
+(method = o.f)(); <span class="next">// undefined</span>
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Ассициативные массивы</h2>
-		<p>Если очень хочется, можно сделать даже ключ с пробелом</p>
+		<h2>Внимательно следим за руками!</h2>
+		<p>В скобках отдельное выражение. Выполняется &laquo;по частям&raquo;</p>
 		<pre><code class="javascript">
-var o = {};
-o['ключ с пробелом в названии'] = 1;
-// но использовать можно только через []
-o.ключ с пробелом в названии = 1; // Ошибка!
+// примерно так...
+var expression_result = (method = o.f);
+expression_result();
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Ассициативные массивы</h2>
-		<p>Возможен доступ через переменную</p>
+		<h2>Внимательно следим за руками!</h2>
+		<p>Но если в скобках нет выражения, они ни на что не влияют. Т.е. это не скобки &laquo;виноваты&raquo;</p>
 		<pre><code class="javascript">
-var o = {};
-var prop = 'foo';
-o[prop] = 'bar';
-o.foo; // 'bar'
+(o.f)(); // [object Object], сам объект o
 		</code></pre>
 	</section>
-
-	<section class="slide">
-		<h2>Ассициативные массивы</h2>
-		<p>Проверка ключа: надежнее через <code>in</code></p>
-		<pre><code class="javascript">
-var o = {};
-o.foo = 1;
-'foo' in o; // true
-'bar' in o; // false
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Ассициативные массивы</h2>
-		<p>Не проверяйте через <code>== undefined</code>!</p>
-		<pre><code class="javascript">
-var o = {};
-o.x = undefined; // so evil!
-o.x == undefined; // true!
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Как перебрать все ключи?</h2>
-		<p>Цикл for-in, но важно помнить, что порядок перебора в общем случае не гарантирован!</p>
-		<pre><code class="javascript">
-for(var key in obj) {
-	alert('Key: ' + key + ', value: ' + obj[key]);
-}
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Как удалить ключ?</h2>
-		<p>Оператор <code>delete</code>. Предназначен только для того, что бы удалить ключ из словаря!</p>
-		<pre><code class="javascript">
-var o = { x: 1 };
-'x' in o; // true
-delete o.x
-'x' in o; // false
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Объекты &laquo;ходят&raquo; по ссылке</h2>
-		<p>В переменной хранится не сам объект, а &laquo;адрес в памяти&raquo; где он находится.</p>
-		<pre><code class="javascript">
-var o = { x: 1 };
-var b = o; // не копия а ссылка!
-b.y = 2; // меняем и "оригинал"
-'y' in o; // true
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2 class="shout">Массивы</h2>
-	</section>
-
-
-	<section class="slide">
-		<h2>Массивы</h2>
-		<p>Как объекты, но с прицелом на числовые положительные ключи</p>
-		<ul>
-			<li class="next">Знает сколько в нем элементов</li>
-			<li class="next">Имеет дополнительные методы для добавления элементов в начало, середину и конец</li>
-			<li class="next">Но, грубо говоря, это все тот же объект или словарь</li>
-		</ul>
-	</section>
-
-	<section class="slide">
-		<h2>Создание</h2>
-		<pre><code class="javascript">
-var arr_empty = [];
-var arr = [1, 2, 3];
-var beCareful = new Array();
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Создание через new Array()</h2>
-		<p>Обычно стараются избегать такого способа создания:</p>
-		<ul>
-			<li class="next"><code>new Array()</code> &mdash; пустой массив</li>
-			<li class="next"><code>new Array(10)</code> &mdash; массив длины 10 с пустыми элементами</li>
-			<li class="next"><code>new Array(1, 2, 3)</code> &mdash; массив с тремя элементами</li>
-			<li class="next"><code>new Array(-2)</code><span class="next"> &mdash; ошибка!</span></li>
-		</ul>
-	</section>
-
-	<section class="slide">
-		<h2>Длина массива</h2>
-		<p>Свойство <code>length</code> может, в том числе, использоваться и для усечения массива</p>
-		<pre><code class="javascript">
-var a = [1, 2];
-a.length; // 2
-a.length = 1;
-a; // [1]
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Работа с массивом</h2>
-		<pre><code class="javascript">
-var a = [];
-a[0] = 1; // a = [1]
-a.length; // 1
-a[2] = 2; // a = [1, undefined, 2]
-a.length; // 3
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Перебор массива</h2>
-		<p>По индексу от 0 до длины - 1</p>
-		<pre><code class="javascript">
-var a = [1, 2, 3, 4];
-for (var i = 0; i < a.length; i++) {
-	// do something with a[i]
-}
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>&laquo;Разреженные&raquo; массивы</h2>
-		<pre><code class="javascript">
-var a = [1, 2];
-a[100] = 3; // a.length == 101
-for (var i = 0; i < a.length; i++) {
-	if (i in a) {
-		// do something with a[i]
-	}
-}
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Полезные методы</h2>
-		<ul>
-			<li class="next">Добавление/удаление в конец: <code>push</code>, <code>pop</code></li>
-			<li class="next">Добавление/удаление в начало: <code>shift</code>, <code>unshift</code></li>
-			<li class="next">Поиска индекса элемента: <code>indexOf</code>, <code>lastIndexOf</code></li>
-			<li class="next">Добавление/удаление в середину: <code>splice</code></li>
-			<li class="next">Обратить массив: <code>reverse</code></li>
-			<li class="next">Получить копию всего массива или кусочка: <code>slice</code></li>
-			<li class="next">Объединить с другим массивом: <code>concat</code></li>
-			<li class="next">Превратить в строку через разделитель: <code>join</code></li>
-		</ul>
-	</section>
-
-
-	<section class="slide">
-		<h2>Прочие операторы</h2>
-		<p>Не пытайтесь использовать &laquo;стандартые&raquo; операторы с массивами! Вас ждет разочарование.</p>
-		<pre><code class="javascript">
-[1,2]+[3,4]; // '1,23,4'
-3+[2]; // '32'
-3-[2]; // 1
-3-[1,2]; // NaN
-		</code></pre>
-	</section>
-
 
 	<section class="slide">
 		<h2 class="shout">
