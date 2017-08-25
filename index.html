@@ -211,7 +211,50 @@ theName(); // ReferenceError: theName is not defined
 		</code></pre>
 	</section>
 
+	<section class="slide">
+		<h2>Области видимости и строгий режим</h2>
+		<pre><code class="javascript">
+function badOne() {
+	myVar = 1; // заметили?
+}<span class="next">
+badOne();
+myVar; // 1
+</span>
+		</code></pre>
+	</section>
 
+	<section class="slide">
+		<h2>Cтрогий режим</h2>
+		<p>Присвоение без объявления может создать глоабльную переменную! Для решения этой проблемы полезно использовать строгий режим (англ. strict mode).</p>
+		<pre><code class="javascript">
+function() {
+	'use strict';
+}
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Cтрогий режим</h2>
+		<pre><code class="javascript">
+function badOne() {
+	'use strict';
+	myVar = 1;
+}
+badOne(); // ReferenceError: myVar is not defined
+		</code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2>Итого: области видимости</h2>
+		<ul>
+			<li class="next">Область видимость ограничивается функцией</li>
+			<li class="next">Объявление переменной и функции всегда всплывает к верхней точки области видимости</li>
+			<li class="next">Присвоение происходит только там где оно описано</li>
+			<li class="next">Переменная ищется в текущей области видимости, и выше пока не &laquo;упремся&raquo; в глобальный объект.</li>
+			<li class="next">Используйте строгий режим!</li>
+		</ul>
+	</section>
 
 
 	<section class="slide">
