@@ -388,6 +388,132 @@ expression_result();
 		</code></pre>
 	</section>
 
+
+	<section class="slide">
+		<h2>Можно ли поменять контекст?</h2>
+		<p>Да, можно!</p>
+		<ul>
+			<li>Методы <code>call</code> и <code>apply</code></li>
+			<li>Метод <code>bind</code></li>
+		</ul>
+	</section>
+
+	<section class="slide">
+		<h2>Смена контекста при вызове</h2>
+		<p>Методы <code>call</code> и <code>apply</code> есть у любой функции
+			и позволяют вызвать ее с явно заданным контекстом</p>
+		<pre><code class="javascript">
+function showThis() {
+	alert(this);
+}
+showThis.call('abcd'); // abcd
+showThis.apply('abcd'); // abcd
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Две функции делают одно и то же?</h2>
+		<p>На самом деле они позволяют задать не только контекст, но и аргументы. Пример:</p>
+		<pre><code class="javascript">
+function addNumbersPutToThis(a, b) {
+	this.result = a + b;
+}
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Две функции делают одно и то же?</h2>
+		<pre><code class="javascript">
+function addNumbersPutToThis(a, b) {
+	this.result = a + b;
+}
+// window.result == 30 в обоих случаях
+addNumbersPutToThis.apply(window, [10, 20]);
+addNumbersPutToThis.call(window, 10, 20);
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Полезности</h2>
+		<p>Помните Math.max?</p>
+		<pre><code class="javascript">
+Math.max(10, -5, 30, 40); // 40
+		</code></pre>
+		<p>А что если массив произвольной длины?</p>
+	</section>
+
+	<section class="slide">
+		<h2>Полезности. Math.max</h2>
+		<pre><code class="javascript">
+function calcArrayMax(arr) {
+	return Math.max(arr);
+}
+calcArrayMax([10, 20, -10]); // Нет, так не получится
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Полезности. Math.max</h2>
+		<pre><code class="javascript">
+function calcArrayMax(arr) {
+	return Math.max.apply(Math, arr);
+}
+calcArrayMax([10, 20, -10]); // 20
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Потеря контекста</h2>
+		<p>Простой пример когда функция может потерять контекст</p>
+		<pre><code class="javascript">
+// obj.method вызовется в контексте window
+setTimeout(obj.method, 100);
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Привязка контекста на всегда</h2>
+		<p>Метод функции <code>bind</code> позволяет привязать контекст выполнения на всегда.
+			ВАЖНО! Результат работы &mdash; новая функция!</p>
+		<pre><code class="javascript">
+obj.method == obj.method.bind(obj); // false
+// вызовется в контексте obj
+setTimeout(obj.method.bind(obj), 100);
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Кстати. А можно ли обойтись без bind?</h2>
+		<p>Да, можно. Замыкания помогут.</p>
+		<pre><code class="javascript">
+setTimeout(function() {
+	obj.method();
+}, 100);
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Обходимся без bind</h2>
+		<p>Часто можно встретить в коде переменную <code>self</code> &mdash; хорошая практика использовать ее для сохранения контекста</p>
+		<pre><code class="javascript">
+var self = this;
+// ... later this function ...
+someWhere.passMeAFunction(function() {
+	self.myMethod();
+		</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Итого: this, или конекст вызова</h2>
+		<ul>
+			<li class="next">Есть у любой функции</li>
+			<li class="next">Определяется в момент вызова</li>
+			<li class="next">Можно поменять при вызове (<code>apply</code>, <code>call</code> и <code>bind</code>)
+				, но не во время выполнения</li>
+			<li class="next">Помним, что <code>bind</code> возвращает новую функцию!</li>
+		</ul>
+	</section>
+
 	<section class="slide">
 		<h2 class="shout">
 			<img src="pictures/sbis-bird.png" alt="" width="30%"><br />
