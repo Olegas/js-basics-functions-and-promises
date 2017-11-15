@@ -37,12 +37,12 @@
 <body class="shower list">
 
 	<header class="caption">
-		<h1>JavaScript. Основы. Функции, асинхронность.</h1>
+		<h1>JavaScript. Асинхронная обработка данных.</h1>
 		<p>Елифантьев Олег, Тензор.</p>
 	</header>
 
 	<section class="slide" id="cover">
-		<h2>JavaScript. Функции, асинхронность.</h2>
+		<h2>JavaScript. Асинхронная обработка данных.</h2>
 		<p>Елифантьев Олег, Тензор.</p>
 		<figure>
 			<img class="cover" src="pictures/cover.jpg" alt="Hands on the orange typewriter in a park">
@@ -64,453 +64,268 @@
 				font-style:italic;
 				font-size:20px;
 				}
-				#cover p a {
-					color:#FFF;
-					}
+			#cover p a {
+				color:#FFF;
+			}
 		</style>
 	</section>
 
 	<section class="slide">
-		<h2>Функции и асинхронные процесс</h2>
-		<p>Понимание таких вещей как область видимости, hoisting (оно же всплытие), замыкания, контекст
-			вызова и асинхронная обработка &mdash; основополагающие вещи в JavaScript</p>
+		<h2 class="shout">Асинхронные процессы на &laquo;птичках и рыбках&raquo;</h2>
 	</section>
 
 	<section class="slide">
-		<h2 class="shout">Глобальный объект</h2>
+		<h2>Асинхронная обработка данных</h2>
+		<p>Все вы наверняка хоть раз бывали в ресторане.
+			А если вдруг не бывали, то точно знаете как там все устроено из кино&hellip;</p>
 	</section>
 
 	<section class="slide">
-		<h2>Глобальные функции и переменные</h2>
-		<figure>
-			<blockquote>
-				<p>Глобальными называют переменные и функции, которые не находятся внутри какой-то функции.
-					То есть, иными словами, если переменная или функция не находятся внутри конструкции
-					<code>function</code>, то они &mdash; &laquo;глобальные&raquo;.</p></blockquote>
-			<figcaption>learn.javascript.ru</figcaption>
-		</figure>
-	</section>
-
-	<section class="slide">
-		<h2>Глобальный объект</h2>
-		<p>На самом деле все &laquo;глобальные&raquo; сущности являются свойствами глобального объекта. В браузере это объект <code>window</code></p>
-		<pre><code class="javascript">
-var a = 1;
-window.a; // 1
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Порядок объявления и присвоения</h2>
-		<p>Переменные объявляются в момент интерпретации скрипта, присвоение происходит в тот момент, когда выполнение дойдет до этого места.</p>
-		<pre><code class="javascript">
-alert(x); // ReferenceError: x is not defined
-alert(x); var x = 1; // Алерт с текстом undefined
-// ... хотя может показаться что переменной нет
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Область видимости и всплытие</h2>
-		<pre><code class="javascript">
-function foo() {
-	for(var i = 0; i < 10; i++) {
-		// do something
+		<h2>Официант принимает заказ</h2>
+		<pre class="next"><code class="javascript">_getOrder: function(client) {
+	var item, order = [];
+	while(item = client.waitForOrderItem()) {
+		order.push(item);
 	}
-	alert(i); // ?.. <span class="next"><mark>10</mark></span>
-}
-		</code></pre>
+	this.say('Скоро все будет готово!');
+	return order;
+}</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Что на самом деле происходит?</h2>
-		<pre><code class="javascript">
-function foo() {
-	<mark>var i;</mark> // переменная "всплывает"
-	for(i = 0; i < 10; i++) {
-		// do something
+		<h2>Официант принимает заказ</h2>
+		<pre><code class="javascript">_getOrder: function(client) {
+	var item, order = [];
+	while(<mark>item = client.waitForOrderItem()</mark>) {
+		order.push(item);
 	}
-	alert(i);
+	this.say('Скоро все будет готово!');
+	return order;
+}</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>Когда заказ принят&hellip;</h2>
+		<pre class="next"><code class="javascript">pleaseTakeMyOrder: function(client) {
+	var order = this._getOrder(client);
+	return this._getOrderDone(order); // Magic!
 }
+
+Waiter.pleaseTakeMyOrder(me); // ???
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Что ограничивает всплытие?</h2>
-		<p>&laquo;Всплытие&raquo; ограничивается областью видимости переменной.</p>
-		<p>Область видимости в свою очередь ограничивается функцией.</p>
-		<p>Вывод: переменную видно в той функции, где она объявлена, и во всех функциях ниже.</p>
-	</section>
-
-	<section class="slide">
-		<h2>Пример</h2>
-		<pre><code class="javascript">
-function outer() {
-	var a = 1; // <--------.
-	function inner() { //  |
-		alert(a); // ------'
-	}
-	inner();
+		<h2>Когда заказ принят&hellip;</h2>
+		<pre><code class="javascript">pleaseTakeMyOrder: function(client) {
+	var order = this._getOrder(client);
+	return this._getOrderDone(order); // -> Promise, Deferred
 }
+
+Waiter.pleaseTakeMyOrder(me); // -> Promise, Deferred
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Пример</h2>
-		<pre><code class="javascript">
-function outer() {
-	function inner() {
-		alert(a); // ?.. <span class="next"><mark>undefined</mark></span>
-	}
-	inner();
-	var a = 1;
-}
+		<h2>Когда заказ готов&hellip;</h2>
+		<pre><code class="javascript">Waiter.pleaseTakeMyOrder(me).addCallback(function(dishes) {
+	me.eat(dishes);
+});
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Пример</h2>
-		<pre><code class="javascript">
-function outer() {
-	var a;
-	function inner() {
-		alert(a);
-	}
-	inner();
-	a = 1;
+		<h2>А если заказ не приготовили?</h2>
+		<pre class="next"><code class="javascript">Waiter.pleaseTakeMyOrder(me)
+	.addCallback(function(dishes) {
+		me.eat(dishes);
+	})
+	.addErrback(function(regrets) {
+		me.sad();
+	});
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Кстати&hellip;</h2>
-		<pre><code class="javascript">
-function outer() {
-	var a = 1;
-	inner();
-	function inner() {
-		alert(a); // 1
-	}
-}
+		<h2>А что внутри у официанта?</h2>
+		<pre class="next"><code class="javascript">pleaseTakeMyOrder: function(client) {
+	var order = this._getOrder(client);
+	return this._getOrderDone(order);
+},<span class="next">
+getOrderDone: function(order) {
+	return Kitchen.cook(order);
+}</span></code></pre>
+	</section>
+
+
+	<section class="slide">
+		<h2>А что на кухне</h2>
+		<pre class="next"><code class="javascript">cook: function(order) {
+	// дождаться пока появится свободный повар
+	// отдать ему заказ для приготовления
+}</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>А что на кухне</h2>
+		<pre><code class="javascript">cook: function(order) {
+	var cook = this.waitForFreeCook();
+	var dishes = cook.makeFood(order);
+	return dishes;
+}</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>А что на кухне</h2>
+		<pre><code class="javascript">cook: function(order) {
+	return this.waitForFreeCook()
+		.addCallback(function(cook) {
+			return cook.makeFood(order);
+		});
+}</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>А что на кухне</h2>
+		<pre><code class="javascript">cook: function(order) {
+	return this.waitForFreeCook()
+		<mark>.addCallback(function(cook) {</mark>
+			<mark>return cook.makeFood(order);</mark>
+		<mark>})</mark>
+}</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>И тут ВНЕЗАПНО&hellip;</h2>
+		<pre class="next"><code class="javascript">Waiter.pleaseTakeMyOrder(me)
+	// .addCallback(...
+	.addErrback(function(regrets) {
+		<span class="next">// regrets == 'Колян! У нас духовка взорвалась!</span>
+		me.sad();
+	});
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Кстати&hellip;</h2>
-		<p>Функции, а если точнее, выражения типа Function Declaration (объявление функции), тоже всплывают к вершине области видимости</p>
-	</section>
-
-	<section class="slide">
-		<h2>А что есть кроме Function Declaration?</h2>
-		<p>Function Expression</p>
-		<pre><code class="javascript">
-// работает так же, как и простое присвоение
-var myFunc = function theName() { return 1; }
-myFunc(); // 1
-theName(); // ReferenceError: theName is not defined
+		<h2>И тут ВНЕЗАПНО&hellip;</h2>
+		<pre><code class="javascript">Waiter.pleaseTakeMyOrder(me)
+	// .addCallback(...
+	.addErrback(function(regrets) {
+		<span>// regrets == 'Колян! У нас духовка взорвалась!</span>
+		me.angry();
+		me.getOut();
+	});
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Области видимости и строгий режим</h2>
-		<pre><code class="javascript">
-function badOne() {
-	myVar = 1; // заметили?
-}<span class="next">
-badOne();
-myVar; // 1
-</span>
+		<h2>Как ведет себя правильный официант</h2>
+		<pre class="next"><code class="javascript">_getOrderDone: function(order) {
+	return Kitchen
+		.cook(order)
+		.addErrback(function(badThingsHappens) {
+			return new Error('К сожалению, ...');
+		})
+}</code></pre>
+	</section>
+
+	<section class="slide">
+		<h2>И тут ВНЕЗАПНО&hellip;</h2>
+		<pre><code class="javascript">Waiter.pleaseTakeMyOrder(me)
+	// .addCallback(...
+	.addErrback(function(regrets) {
+		<span>// regrets == 'К сожалению, ...</span>
+		me.tryChangeOrder();
+	});
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Cтрогий режим</h2>
-		<p>Присвоение без объявления может создать глобальную переменную! Для решения этой проблемы полезно использовать строгий режим (англ. strict mode).</p>
-		<pre><code class="javascript">
-function() {
-	'use strict';
-}
-		</code></pre>
+		<h2>Что если заказ не только с кухни?</h2>
+		<pre class="next"><code class="javascript">_getOrderDone: function(order) {
+	var toKitchen = onlyToKitchen(order),
+		toBar = onlyToBar(order);
+	<span class="next">
+	Kitchen.cook(toKitchen).addCallback(function (dishes) {
+		Bar.get(toBar).addCallback(function (wine) {
+			// result is ...
+		})
+	});</span></code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Cтрогий режим</h2>
-		<pre><code class="javascript">
-function badOne() {
-	'use strict';
-	myVar = 1;
-}
-badOne(); // ReferenceError: myVar is not defined
-		</code></pre>
+		<h2>Хороший официант так не поступит!</h2>
+		<pre class="next"><code class="javascript">return new ParallelDeferred({
+	steps: [
+		Kitchen.cook(fromKitchen),
+		Bar.get(fromBar)
+	]
+}).done().getResult().addErrback(function(badThingsHappens) {
+	return new Error('К сожалению, ...');
+})</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Кстати! А что такое замыкание?</h2>
-		<p>Замыкание это функция и все внешние переменные (из других областей видимости) которые ей доступны. Создается в момент объявления функции.</p>
+		<h2 class="shout">Асинхронность в JavaScript</h2>
 	</section>
 
 	<section class="slide">
-		<h2>Всегда текущее значение!</h2>
-		<pre><code class="javascript">
-var name = 'John';
-function makeGreeting() {
-	alert('Hello, ' + name + '!');
-}
-makeGreeting(); // 'Hello, John!'<span class="next">
-name = 'Иван';
-makeGreeting(); // 'Hello, Иван!'</span>
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Итого: области видимости</h2>
+		<h2>Асинхронность в JavaScript</h2>
 		<ul>
-			<li class="next">Область видимость ограничивается функцией</li>
-			<li class="next">Объявление переменной и функции всегда всплывает к верхней точки области видимости</li>
-			<li class="next">Присвоение происходит только там где оно описано</li>
-			<li class="next">Переменная ищется в текущей области видимости, и выше пока не &laquo;упремся&raquo; в глобальный объект.</li>
-			<li class="next">Всегда текущее значение, а не то, что было в момент создания замыкания</li>
+			<li class="next">Таймер (setTimeout)</li>
+			<li class="next">Операции с сетью
+				<ul>
+					<li class="next">Подгрузка модулей</li>
+					<li class="next">Выполнение методов бэкэнда</li>
+					<li class="next">Загрузка стилей (CSS) и картинок (&lt;img /&gt;)</li>
+					<li class="next">Можество других API, работающих с &laquo;внешними&raquo; данными</li>
+				</ul>
+			</li>
 		</ul>
 	</section>
 
 	<section class="slide">
-		<h2 class="shout">Методы объектов и контекст вызова</h2>
+		<h2>Как с этим жить?</h2>
+		<pre><code class="javascript">
+doAsync(args, cbResult, cbError);
+doAsync(args, cbDone /* function(err, result) */)
+// and counting...
+		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Методы объектов</h2>
-		<p>Свойствами объекта могут быть и функции. Так получим методы.</p>
-		<pre><code class="javascript">
-var o = {
-	name: 'Luke Skywalker',
-	sayHi: function() {
-		alert('Hello!');
+		<h2>Callback Hell</h2>
+		<pre class="next"><code class="javascript">doAsyncOne(args, function(err, result) {
+	if (! err) {
+		doAsyncTwo(result, function(err, result2) {
+			// ... и так далее до бесконечности
+		});
+	} else {
+		// handle it
 	}
-		</code></pre>
+}</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Обращение изнутри</h2>
+		<h2>Promise / Deferred</h2>
 		<pre><code class="javascript">
-var o = {
-	name: 'Luke Skywalker',
-	sayName: function() {
-		alert('My name is ' + ??????????);
-	}
-}
-		</code></pre>
-	</section>
+<strike>doAsync(args, cbResult, cbError);</strike>
+<strike>doAsync(args, cbDone /* function(err, result) */)</strike>
 
-
-	<section class="slide">
-		<h2>Ключевое слово this</h2>
-		<pre><code class="javascript">
-var o = { // <---------------------------------.
-	name: 'Luke Skywalker', // <------------.  |
-	sayName: function() {                // |  |
-		alert('My name is ' + this.name);// |  |
-	} //                        ^    ^------'  |
-} //                            '--------------'
+doAsync(args) // -> Promise/Deferred
 		</code></pre>
 	</section>
 
 	<section class="slide">
-		<h2>Что же такое this?</h2>
+		<h2 class="shout">Для кругозора</h2>
+	</section>
+
+	<section class="slide">
+		<h2>Promise <-> Deferred ????</h2>
 		<ul>
-			<li class="next">Правильное название &mdash; контекст вызова</li>
-			<li class="next">Есть у любой функции, не только у метода объекта</li>
-			<li class="next">Определяется в момент вызова</li>
-			<li class="next">В момент обращения уже нельзя изменить</li>
-		</ul>
-	</section>
-
-	<section class="slide">
-		<h2>У любой функции? Даже без объекта?</h2>
-		<pre><code class="javascript">
-function showThis() {
-	alert(this);
-}
-showThis(); // [object Window], глобальный объект window
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>This <del>is</del> и strict mode</h2>
-		<p>При работе в strict mode поведение отличается!</p>
-		<pre><code class="javascript">
-function showThis() {
-	'use strict';
-	alert(this);
-}
-showThis(); // undefined
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Особенности</h2>
-		<p>Помним о том, что контекст определяется во время вызова!</p>
-		<pre><code class="javascript">
-var o = {
-	prop: 'value',
-	f: function() { alert(this.prop); }
-}
-var f2 = o.f; f2(); // undefined
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Внимательно следим за руками!</h2>
-		<pre><code class="javascript">
-'use strict';
-var method, o = {
-	f: function() { alert(this); }
-};
-(method = o.f)(); <span class="next">// undefined</span>
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Внимательно следим за руками!</h2>
-		<p>В скобках отдельное выражение. Выполняется &laquo;по частям&raquo;</p>
-		<pre><code class="javascript">
-// примерно так...
-var expression_result = (method = o.f);
-expression_result();
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Внимательно следим за руками!</h2>
-		<p>Но если в скобках нет выражения, они ни на что не влияют. Т.е. это не скобки &laquo;виноваты&raquo;</p>
-		<pre><code class="javascript">
-(o.f)(); // [object Object], сам объект o
-		</code></pre>
-	</section>
-
-
-	<section class="slide">
-		<h2>Можно ли поменять контекст?</h2>
-		<p>Да, можно!</p>
-		<ul>
-			<li>Методы <code>call</code> и <code>apply</code></li>
-			<li>Метод <code>bind</code></li>
-		</ul>
-	</section>
-
-	<section class="slide">
-		<h2>Смена контекста при вызове</h2>
-		<p>Методы <code>call</code> и <code>apply</code> есть у любой функции
-			и позволяют вызвать ее с явно заданным контекстом</p>
-		<pre><code class="javascript">
-function showThis() {
-	alert(this);
-}
-showThis.call('abcd'); // abcd
-showThis.apply('abcd'); // abcd
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Две функции делают одно и то же?</h2>
-		<p>На самом деле они позволяют задать не только контекст, но и аргументы. Пример:</p>
-		<pre><code class="javascript">
-function addNumbersPutToThis(a, b) {
-	this.result = a + b;
-}
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Две функции делают одно и то же?</h2>
-		<pre><code class="javascript">
-function addNumbersPutToThis(a, b) {
-	this.result = a + b;
-}
-// window.result == 30 в обоих случаях
-addNumbersPutToThis.apply(window, [10, 20]);
-addNumbersPutToThis.call(window, 10, 20);
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Полезности</h2>
-		<p>Помните Math.max?</p>
-		<pre><code class="javascript">
-Math.max(10, -5, 30, 40); // 40
-		</code></pre>
-		<p>А что если массив произвольной длины?</p>
-	</section>
-
-	<section class="slide">
-		<h2>Полезности. Math.max</h2>
-		<pre><code class="javascript">
-function calcArrayMax(arr) {
-	return Math.max(arr);
-}
-calcArrayMax([10, 20, -10]); // Нет, так не получится
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Полезности. Math.max</h2>
-		<pre><code class="javascript">
-function calcArrayMax(arr) {
-	return Math.max.apply(Math, arr);
-}
-calcArrayMax([10, 20, -10]); // 20
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Потеря контекста</h2>
-		<p>Простой пример когда функция может потерять контекст</p>
-		<pre><code class="javascript">
-// obj.method вызовется в контексте window
-setTimeout(obj.method, 100);
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Привязка контекста на всегда</h2>
-		<p>Метод функции <code>bind</code> позволяет привязать контекст выполнения на всегда.
-			ВАЖНО! Результат работы &mdash; новая функция!</p>
-		<pre><code class="javascript">
-obj.method == obj.method.bind(obj); // false
-// вызовется в контексте obj
-setTimeout(obj.method.bind(obj), 100);
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Кстати. А можно ли обойтись без bind?</h2>
-		<p>Да, можно. Замыкания помогут.</p>
-		<pre><code class="javascript">
-setTimeout(function() {
-	obj.method();
-}, 100);
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Обходимся без bind</h2>
-		<p>Часто можно встретить в коде переменную <code>self</code> &mdash; хорошая практика использовать ее для сохранения контекста</p>
-		<pre><code class="javascript">
-var self = this;
-// ... later this function ...
-someWhere.passMeAFunction(function() {
-	self.myMethod();
-		</code></pre>
-	</section>
-
-	<section class="slide">
-		<h2>Итого: this, или конекст вызова</h2>
-		<ul>
-			<li class="next">Есть у любой функции</li>
-			<li class="next">Определяется в момент вызова</li>
-			<li class="next">Можно поменять при вызове (<code>apply</code>, <code>call</code> и <code>bind</code>)
-				, но не во время выполнения</li>
-			<li class="next">Помним, что <code>bind</code> возвращает новую функцию!</li>
+			<li class="next">.addCallback - .then</li>
+			<li class="next">.addErrback - .catch</li>
+			<li class="next">ParallelDeferred - Promise.all([...]) -> Promise</li>
 		</ul>
 	</section>
 
